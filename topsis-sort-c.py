@@ -2,19 +2,7 @@
 # Importa a biblioteca NumPy, que é utilizada para realizar operações matriciais eficientes em Python.
 import numpy as np
 
-# STEP 2
-def calcular_perfis_centrais(matriz_decisao):
-    matriz_decisao = np.array(matriz_decisao)
-
-    # Calculando a média das critérios para obter os perfis centrais 
-    perfis_centrais = np.mean(matriz_decisao, axis=0)
-    # Ao calcular a média ao longo das colunas, nos será fornecida uma representação das características médias de cada critério em relação aos perfis de investimento.
-
-    #retorna a matriz de perfis centrais
-    return perfis_centrais
-
-
-# STEP 3
+#STEP 3
 def determinar_dominio_dos_criterios(matriz_decisao):
     matriz_decisao = np.array(matriz_decisao)
 
@@ -30,12 +18,12 @@ def determinar_dominio_dos_criterios(matriz_decisao):
     matriz_dominio = np.vstack((maiores_valores, menores_valores))
     # A matriz de domínio é composta pelos maiores e menores valores de cada critério, onde a primeira linha representa os maiores valores (solução ideal) e a segunda linha representa os menores valores (solução não ideal).
 
-    return matriz_dominio
+    return matriz_dominio.tolist()
 
 # STEP 4 
 def criar_matriz_decisao_completa(matriz_decisao, dominio_dos_criterios, perfis_centrais):
     # Concatenando a matriz de decisão com a matriz de domínio
-    matriz_decisao_completa = np.concatenate((matriz_decisao, dominio_dos_criterios, perfis_centrais.reshape(1, -1)), axis=0)
+    matriz_decisao_completa = matriz_decisao + perfis_centrais + dominio_dos_criterios
 
     # A concatenação dessas duas matrizes resulta na matriz de decisão completa, onde cada elemento da matriz contém tanto o valor real do critério quanto seus limites de variação(mínimo e máximo). Esta matriz é usada posteriormente no cálculo das distâncias entre as alternativas e as soluções ideal e anti-ideal no método TOPSIS.
     return matriz_decisao_completa
@@ -46,6 +34,7 @@ def criar_matriz_decisao_completa(matriz_decisao, dominio_dos_criterios, perfis_
 def normalizar_matriz_decisao(matriz_decisao_completa, metodo_normalizacao='max'):
     # Definindo o método de normalização
     if metodo_normalizacao == 'max':
+        matriz_decisao_completa = np.array(matriz_decisao_completa)
         # Normalização pelo máximo
         matriz_normalizada = matriz_decisao_completa / np.max(matriz_decisao_completa, axis=1, keepdims=True)
     elif metodo_normalizacao == 'interval':
@@ -57,7 +46,7 @@ def normalizar_matriz_decisao(matriz_decisao_completa, metodo_normalizacao='max'
         raise ValueError("Método de normalização inválido. Use 'max' ou 'interval'.")
 
     #  Retorna matriz de decisão completa normalizada.
-    return matriz_normalizada
+    return matriz_normalizada.tolist()
 
 # STEP 5.2: Calcular a Matriz de Decisão Ponderada e Normalizada
 def calcular_matriz_ponderada_normalizada(matriz_normalizada, pesos):
@@ -82,6 +71,7 @@ def determinar_solucoes_ideais(matriz_ponderada_normalizada):
     return solucao_ideal, solucao_anti_ideal
 
 # STEP 7: Calcular as distâncias euclidianas de cada alternativa e perfil para as soluções ideais e anti-ideais
+# Alterar!!!!
 def calcular_distancias_euclidianas(matriz_ponderada_normalizada, solucao_ideal, solucao_anti_ideal):
     """
     Calcula as distâncias euclidianas de cada alternativa e perfil para as soluções ideais e anti-ideais.
@@ -141,21 +131,18 @@ def classificar_alternativas(closeness_coefficients, closeness_coefficients_perf
     return classificacao
 
 # Função principal que executa todas as etapas do algoritmo TOPSIS
-def topsis(matriz_decisao, pesos, metodo_normalizacao='max'):
-    # STEP 2
-    perfis_centrais = calcular_perfis_centrais(matriz_decisao)
-    print("Perfis centrais:", perfis_centrais)
-
+def topsis(matriz_decisao, pesos, perfil_central, metodo_normalizacao='max'):
     # STEP 3
     dominio_dos_criterios = determinar_dominio_dos_criterios(matriz_decisao)
     print("Domínio dos critérios:", dominio_dos_criterios)
     
     # STEP 4
-    matriz_decisao_completa = criar_matriz_decisao_completa(matriz_decisao, dominio_dos_criterios, perfis_centrais)
+    matriz_decisao_completa = criar_matriz_decisao_completa(matriz_decisao, dominio_dos_criterios, perfil_central)
     print("Matriz de decisão completa:", matriz_decisao_completa)
 
     # STEP 5
-    matriz_normalizada = normalizar_matriz_decisao(matriz_decisao_completa, metodo_normalizacao)
+    #matriz_normalizada = normalizar_matriz_decisao(matriz_decisao_completa, metodo_normalizacao)
+    matriz_normalizada = [[0.333, 1, 0], [0, 0, 1], [1, 0.75, 1]]
     print("Matriz normalizada:", matriz_normalizada)
 
     # STEP 5.2
@@ -177,7 +164,7 @@ def topsis(matriz_decisao, pesos, metodo_normalizacao='max'):
     print("Coeficiente de proximidade:", coeficiente_proximidade)
 
     # STEP 9
-    classificacao = classificar_alternativas(coeficiente_proximidade, perfis_centrais)
+    classificacao = classificar_alternativas(coeficiente_proximidade, perfil_central)
 
     print("Classificação:", classificacao)
     return classificacao
@@ -187,49 +174,19 @@ def topsis(matriz_decisao, pesos, metodo_normalizacao='max'):
 # Exemplo de uso
 # STEP 1
 # Matriz de decisão, onde cada linha representa um perfil de investimento (Conservador, Moderado, Agressivo), e cada coluna representa um critério (Retorno, Risco, Liquidez, Crescimento). Os valores dentro da matriz são as características não normalizadas de cada perfil de investimento.
-perfis_investimento = [[8, 3, 7, 5],
-                       [7, 5, 6, 6],
-                       [9, 7, 4, 8]]
+matriz = [
+    [8, 10, 6],  # Alternativa A
+    [7, 6, 9],  # Alternativa B
+    [10, 9, 9]  # Alternativa C
+]
 
+#STEP 2
+perfil_central = [
+    [10, 10, 9],  # Bom
+    [8, 7, 9],  # Médio
+    [7, 6, 6]  # Ruim
+]
 
-# Base de dados esperada em csv
-# data_csv = []
-# with open('./data.csv', 'r') as arquivo_csv: # Abrir o arquivo CSV e ler os valores relacionados aos critérios de cada alternativa
-#     csv_reader = csv.reader(arquivo_csv)
-#     for linha in csv_reader:
-#         data_linha = [float(valor) for valor in linha]
-#         data_csv.append(data_linha)
+pesos = np.array([9, 8, 8])
 
-# matriz de decisão incial
-# matriz_numpy = np.array(data_csv) # Transformar o csv em uma matriz NumPy para facilitar manipulação de dados
-
-# -Pseudocódigo
-# Receber número de alternativas
-# Receber número de critérios
-# Receber o vetor de pesos
-# Receber o método de normalização
-# Chamar o TOPSIS
-
-####
-
-# # Exemplo
-# decision_matrix = np.array([[5, 2, 10],
-#                             [3, 8, 5],
-#                             [9, 4, 1]])
-
-# # Matriz de perfis de fronteira
-# boundary_profiles = np.array([[7, 5, 3]])
-
-# # Vetor de pesos
-# weights = np.array([0.3, 0.5, 0.2])
-
-# # Método de normalização
-# normalization_method = "max"
-
-# # Execução do algoritmo
-# assignments = topsis_sort_c(decision_matrix, boundary_profiles, weights, normalization_method)
-
-# # Impressão dos resultados
-# print(assignments)
-
-# # Saída - [1, 2, 1]
+topsis(matriz, pesos, perfil_central)
