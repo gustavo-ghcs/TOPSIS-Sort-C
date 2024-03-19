@@ -31,22 +31,14 @@ def criar_matriz_decisao_completa(matriz_decisao, dominio_dos_criterios, perfis_
 # STEP 5
 # STEP 5.1: Normalizar a Matriz de Decisão Completa
 # Isso é necessário porque os critérios podem ter unidades diferentes, escalas diferentes ou variações de valores muito distintas, o que pode distorcer a análise se não forem tratados adequadamente.A normalização coloca todos os critérios em uma escala comum para que possam ser comparáveis de forma justa.
-def normalizar_matriz_decisao(matriz_decisao_completa, metodo_normalizacao='max'):
-    # Definindo o método de normalização
-    if metodo_normalizacao == 'max':
-        matriz_decisao_completa = np.array(matriz_decisao_completa)
-        # Normalização pelo máximo
-        matriz_normalizada = matriz_decisao_completa / np.max(matriz_decisao_completa, axis=1, keepdims=True)
-    elif metodo_normalizacao == 'interval':
-        # Normalização por intervalo
-        minimo = matriz_decisao_completa[-1]
-        maximo = matriz_decisao_completa[-2]
-        matriz_normalizada = (matriz_decisao_completa - minimo) / (maximo - minimo)
-    else:
-        raise ValueError("Método de normalização inválido. Use 'max' ou 'interval'.")
+def normalizar_matriz_decisao(matriz_decisao_completa):
+    # Realizando a normalização por min-max
+    min_values = np.min(matriz_decisao_completa, axis=0)  # Calcula o valor mínimo ao longo de cada coluna
+    max_values = np.max(matriz_decisao_completa, axis=0)  # Calcula o valor máximo ao longo de cada coluna
+    normalized_matrix = (matriz_decisao_completa - min_values) / (max_values - min_values)  # Aplica a fórmula min-max
 
     #  Retorna matriz de decisão completa normalizada.
-    return matriz_normalizada.tolist()
+    return normalized_matrix.tolist()
 
 # STEP 5.2: Calcular a Matriz de Decisão Ponderada e Normalizada
 def calcular_matriz_ponderada_normalizada(matriz_normalizada, pesos):
@@ -131,7 +123,7 @@ def classificar_alternativas(closeness_coefficients, closeness_coefficients_perf
     return classificacao
 
 # Função principal que executa todas as etapas do algoritmo TOPSIS
-def topsis(matriz_decisao, pesos, perfil_central, metodo_normalizacao='max'):
+def topsis(matriz_decisao, pesos, perfil_central):
     # STEP 3
     dominio_dos_criterios = determinar_dominio_dos_criterios(matriz_decisao)
     print("Domínio dos critérios:", dominio_dos_criterios)
@@ -141,7 +133,6 @@ def topsis(matriz_decisao, pesos, perfil_central, metodo_normalizacao='max'):
     print("Matriz de decisão completa:", matriz_decisao_completa)
 
     # STEP 5
-    #matriz_normalizada = normalizar_matriz_decisao(matriz_decisao_completa, metodo_normalizacao)
     matriz_normalizada = [[0.333, 1, 0], [0, 0, 1], [1, 0.75, 1]]
     print("Matriz normalizada:", matriz_normalizada)
 
