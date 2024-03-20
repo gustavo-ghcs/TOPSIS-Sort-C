@@ -128,9 +128,8 @@ def topsis(matriz_decisao, pesos, perfis, criterios):
     print("Matriz normalizada:", matriz_decisao_normalizada)
 
     # STEP 5.2
-    #!!!!!!!!!!!!ALTERAR PARA QUE OS PESOS NORMALIZADOS SEJAM UTILIZADOS!!!!!!!!!!!
     pesos_normalizados = normalizar_pesos(pesos)
-    matriz_completa_ponderada_normalizada = calcular_matriz_completa_ponderada_normalizada(matriz_decisao_normalizada, pesos_normalizados) # Lembrar de colocar pesos normalizados!
+    matriz_completa_ponderada_normalizada = calcular_matriz_completa_ponderada_normalizada(matriz_decisao_normalizada, pesos_normalizados)
     print("Matriz ponderada normalizada:", matriz_completa_ponderada_normalizada)
 
     # STEP 6
