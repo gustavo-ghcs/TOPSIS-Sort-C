@@ -18,7 +18,7 @@ def determinar_dominio_dos_criterios(matriz_decisao):
     matriz_dominio = np.vstack((maiores_valores, menores_valores))
     # A matriz de domínio é composta pelos maiores e menores valores de cada critério, onde a primeira linha representa os maiores valores (solução ideal) e a segunda linha representa os menores valores (solução não ideal).
 
-    return matriz_dominio
+    return matriz_dominio.tolist()
 
 
 # STEP 4 
@@ -28,6 +28,7 @@ def criar_matriz_decisao_completa(matriz_decisao, perfis_centrais):
 
     # A concatenação dessas duas matrizes resulta na matriz de decisão completa, onde cada elemento da matriz contém tanto o valor real do critério quanto seus limites de variação(mínimo e máximo). Esta matriz é usada posteriormente no cálculo das distâncias entre as alternativas e as soluções ideal e anti-ideal no método TOPSIS.
     return matriz_decisao_completa
+
 
 
 # STEP 5
@@ -40,22 +41,23 @@ def normalizar_matriz_decisao(matriz_decisao_completa):
     matriz_normalizada = (matriz_decisao_completa - valores_minimos) / (valores_maximos - valores_minimos)  # Aplica a fórmula min-max
 
     #  Retorna matriz de decisão completa normalizada.
-    return matriz_normalizada
+    return matriz_normalizada.tolist()
 
 def normalizar_pesos(pesos):
     #  Retorna pesos normalizados
     soma_pesos = np.sum(pesos)  # Calcula a soma dos pesos
     pesos_normalizados = pesos / soma_pesos  # Divide cada peso pela soma dos pesos
+    print("pesos", pesos_normalizados)
     return pesos_normalizados
 
 # STEP 5.2: Calcular a Matriz de Decisão Ponderada e Normalizada
-def calcular_matriz_ponderada_normalizada(matriz_normalizada, pesos_normalizados):
+def calcular_matriz_ponderada_normalizada(matriz_normalizada, pesos):
     #matriz_normalizada = np.array(matriz_normalizada)
     # Multiplicando cada valor normalizado pelo peso correspondente do critério
-    matriz_ponderada_normalizada = matriz_normalizada * pesos_normalizados
+    matriz_ponderada_normalizada = matriz_normalizada * pesos
 
     # Retorna a matriz de decisão ponderada e normalizada
-    return matriz_ponderada_normalizada
+    return matriz_ponderada_normalizada.tolist()
 
 
 # STEP 6: Determine as soluções ideais e anti-ideais
@@ -141,12 +143,12 @@ def topsis(matriz_decisao, pesos, perfis_centrais):
     print("Matriz de decisão completa:", matriz_decisao_completa)
 
     # STEP 5
-    matriz_normalizada = [[0.333, 1, 0], [0, 0, 1], [1, 0.75, 1]]
+    matriz_normalizada = normalizar_matriz_decisao(matriz_decisao_completa)
     print("Matriz normalizada:", matriz_normalizada)
 
     # STEP 5.2
     pesos_normalizados = normalizar_pesos(pesos)
-    matriz_ponderada_normalizada = calcular_matriz_ponderada_normalizada(matriz_normalizada, pesos_normalizados)
+    matriz_ponderada_normalizada = calcular_matriz_ponderada_normalizada(matriz_normalizada, pesos)
     print("Matriz ponderada normalizada:", matriz_ponderada_normalizada)
 
     # STEP 6
@@ -158,6 +160,10 @@ def topsis(matriz_decisao, pesos, perfis_centrais):
     distancias_ideal, distancias_anti_ideal = calcular_distancias_euclidianas(matriz_ponderada_normalizada, solucao_ideal, solucao_anti_ideal)
     print("Distâncias ideais:", distancias_ideal)
     print("Distâncias anti-ideais:", distancias_anti_ideal)
+
+    distancias_perfil_ideal, distancias_perfil_anti_ideal = calcular_distancias_euclidianas(perfis_centrais, solucao_ideal, solucao_anti_ideal)
+    print("Distâncias perfil ideal:", distancias_perfil_ideal)
+    print("Distâncias perfil anti-ideal:", distancias_perfil_anti_ideal)
 
     # STEP 8
     coeficiente_proximidade = calcular_coeficiente_proximidade(distancias_ideal, distancias_anti_ideal)
