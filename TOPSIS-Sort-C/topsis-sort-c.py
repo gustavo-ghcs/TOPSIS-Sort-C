@@ -161,17 +161,20 @@ def topsis(matriz_decisao, pesos, perfis):
     print("Solução anti-ideal:", solucao_anti_ideal)
 
     # STEP 7
-    distancias_ideal, distancias_anti_ideal = calcular_distancias_euclidianas(matriz_ponderada_normalizada, solucao_ideal, solucao_anti_ideal)
-    print("Distância alternativas ideal:", distancias_ideal)
-    print("Distâncias alternativas anti-ideais:", distancias_anti_ideal)
+    distancias_alternativa_ideal, distancias_alternativa_anti_ideal = calcular_distancias_euclidianas(matriz_ponderada_normalizada, solucao_ideal, solucao_anti_ideal)
+    print("Distância alternativas ideal:", distancias_alternativa_ideal)
+    print("Distâncias alternativas anti-ideais:", distancias_alternativa_anti_ideal)
 
     distancias_perfil_ideal, distancias_perfil_anti_ideal = calcular_distancias_euclidianas(matriz_perfil_normalizada, solucao_ideal, solucao_anti_ideal)
     print("Distâncias perfil ideal:", distancias_perfil_ideal)
     print("Distâncias perfil anti-ideal:", distancias_perfil_anti_ideal)
 
     # STEP 8
-    coeficiente_proximidade = calcular_coeficiente_proximidade(distancias_ideal, distancias_anti_ideal)
-    print("Coeficiente de proximidade:", coeficiente_proximidade)
+    coeficiente_proximidade_alternativa = calcular_coeficiente_proximidade(distancias_alternativa_ideal, distancias_alternativa_anti_ideal)
+    print("Coeficiente de proximidade:", coeficiente_proximidade_alternativa)
+
+    coeficiente_proximidade_perfil = calcular_coeficiente_proximidade(distancias_perfil_ideal, distancias_perfil_anti_ideal)
+    print("Coeficiente de proximidade perfil:", coeficiente_proximidade_perfil)
 
     # STEP 9
     classificacao = classificar_alternativas(coeficiente_proximidade, perfis)
