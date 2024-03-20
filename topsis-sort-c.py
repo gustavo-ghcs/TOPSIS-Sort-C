@@ -47,7 +47,6 @@ def normalizar_pesos(pesos):
     #  Retorna pesos normalizados
     soma_pesos = np.sum(pesos)  # Calcula a soma dos pesos
     pesos_normalizados = pesos / soma_pesos  # Divide cada peso pela soma dos pesos
-    print("pesos", pesos_normalizados)
     return pesos_normalizados
 
 # STEP 5.2: Calcular a Matriz de Decisão Ponderada e Normalizada
@@ -73,7 +72,6 @@ def determinar_solucoes_ideais(matriz_ponderada_normalizada):
 
 
 # STEP 7: Calcular as distâncias euclidianas de cada alternativa e perfil para as soluções ideais e anti-ideais
-# Alterar!!!!
 def calcular_distancias_euclidianas(matriz_ponderada_normalizada, solucao_ideal, solucao_anti_ideal):
     """
     Calcula as distâncias euclidianas de cada alternativa e perfil para as soluções ideais e anti-ideais.
@@ -146,6 +144,9 @@ def topsis(matriz_decisao, pesos, perfis_centrais):
     matriz_normalizada = normalizar_matriz_decisao(matriz_decisao_completa)
     print("Matriz normalizada:", matriz_normalizada)
 
+    matriz_perfil_normalizada = normalizar_matriz_decisao(perfis_centrais)
+    print("Matriz perfil normalizada:", matriz_perfil_normalizada)
+
     # STEP 5.2
     pesos_normalizados = normalizar_pesos(pesos)
     matriz_ponderada_normalizada = calcular_matriz_ponderada_normalizada(matriz_normalizada, pesos)
@@ -158,10 +159,10 @@ def topsis(matriz_decisao, pesos, perfis_centrais):
 
     # STEP 7
     distancias_ideal, distancias_anti_ideal = calcular_distancias_euclidianas(matriz_ponderada_normalizada, solucao_ideal, solucao_anti_ideal)
-    print("Distâncias ideais:", distancias_ideal)
-    print("Distâncias anti-ideais:", distancias_anti_ideal)
+    print("Distância alternativas ideal:", distancias_ideal)
+    print("Distâncias alternativas anti-ideais:", distancias_anti_ideal)
 
-    distancias_perfil_ideal, distancias_perfil_anti_ideal = calcular_distancias_euclidianas(perfis_centrais, solucao_ideal, solucao_anti_ideal)
+    distancias_perfil_ideal, distancias_perfil_anti_ideal = calcular_distancias_euclidianas(matriz_perfil_normalizada, solucao_ideal, solucao_anti_ideal)
     print("Distâncias perfil ideal:", distancias_perfil_ideal)
     print("Distâncias perfil anti-ideal:", distancias_perfil_anti_ideal)
 
