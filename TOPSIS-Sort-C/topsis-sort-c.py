@@ -107,16 +107,8 @@ def classificar_alternativas(coeficientes_proximidade_alternativas, coeficientes
 
     for cpa in coeficientes_proximidade_alternativas:
         diffs = np.abs(cpa - coeficientes_proximidade_perfis)
-        
-        if diffs[0] <= diffs[1]:
-            classificacoes.append('C1')
-        else:
-            for k in range(1, len(coeficientes_proximidade_perfis)):
-                if diffs[k-1] < diffs[k] and diffs[k-2] <= diffs[k-1]:
-                    classificacoes.append(f'C{k}')
-                    break
-            else:
-                classificacoes.append(f'C{len(coeficientes_proximidade_perfis)}')
+        min_diff_index = np.argmin(diffs)
+        classificacoes.append(f'C{min_diff_index+1}')
 
     return classificacoes
 
@@ -187,7 +179,7 @@ matriz = [
     [10, 9, 9]  # Alternativa C
 ]
 
-criterios = [True, True, True]
+criterios = [True, False, True]
 
 #STEP 2
 #Matriz de perfis centrais
