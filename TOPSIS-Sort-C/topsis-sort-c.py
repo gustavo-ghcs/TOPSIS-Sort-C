@@ -60,14 +60,19 @@ def calcular_matriz_completa_ponderada_normalizada(matriz_normalizada, pesos):
 
 
 # STEP 6: Determine as soluções ideais e anti-ideais
-def determinar_solucoes_ideais(matriz_ponderada_normalizada):
-    # Determinando as soluções ideais
-    solucao_ideal = np.max(matriz_ponderada_normalizada, axis=0)
-    # A solução ideal é definida como o perfil de investimento que possui o melhor desempenho em todos os critérios. Para encontrá-la, identificamos o maior valor para cada critério entre todas as alternativas. Esses valores representam o perfil de investimento que maximiza os benefícios em cada critério.
+def determinar_solucoes_ideais(matriz_ponderada_normalizada, criterios):
+    solucao_ideal = np.copy(matriz_ponderada_normalizada[0]) # inicializa com a primeira linha
+    solucao_anti_ideal = np.copy(matriz_ponderada_normalizada[0]) # inicializa com a primeira linha
 
-    # Determinando as soluções anti-ideais
-    solucao_anti_ideal = np.min(matriz_ponderada_normalizada, axis=0)
-    # A solução anti-ideal é o oposto da solução ideal, representando o perfil de investimento que possui o pior desempenho em todos os critérios. Para encontrá-la, identificamos o menor valor para cada critério entre todas as alternativas. Esses valores representam o perfil de investimento que minimiza os benefícios em cada critério.
+    for i in range(1, len(matriz_ponderada_normalizada)):
+        for j in range(len(matriz_ponderada_normalizada[i])):
+            if criterios[j] is True:
+                solucao_ideal[j] = max(solucao_ideal[j], matriz_ponderada_normalizada[i][j])
+                solucao_anti_ideal[j] = min(solucao_anti_ideal[j], matriz_ponderada_normalizada[i][j])
+            elif criterios[j] is False:
+                solucao_ideal[j] = min(solucao_ideal[j], matriz_ponderada_normalizada[i][j])
+                solucao_anti_ideal[j] = max(solucao_anti_ideal[j], matriz_ponderada_normalizada[i][j])
+
     return solucao_ideal, solucao_anti_ideal
 
 
@@ -117,7 +122,7 @@ def classificar_alternativas(coeficientes_proximidade_alternativas, coeficientes
 
 
 # Função principal que executa todas as etapas do algoritmo TOPSIS
-def topsis(matriz_decisao, pesos, perfis):
+def topsis(matriz_decisao, pesos, perfis, criterios):
     # STEP 3
     dominio_dos_criterios = determinar_dominio_dos_criterios(matriz_decisao)
     print("Domínio dos critérios:", dominio_dos_criterios)
@@ -137,7 +142,7 @@ def topsis(matriz_decisao, pesos, perfis):
     print("Matriz ponderada normalizada:", matriz_completa_ponderada_normalizada)
 
     # STEP 6
-    solucao_ideal, solucao_anti_ideal = determinar_solucoes_ideais(matriz_completa_ponderada_normalizada)
+    solucao_ideal, solucao_anti_ideal = determinar_solucoes_ideais(matriz_completa_ponderada_normalizada, criterios)
     print("Solução ideal:", solucao_ideal.tolist())
     print("Solução anti-ideal:", solucao_anti_ideal.tolist())
 
@@ -182,6 +187,8 @@ matriz = [
     [10, 9, 9]  # Alternativa C
 ]
 
+criterios = [True, True, True]
+
 #STEP 2
 #Matriz de perfis centrais
 perfis = [
@@ -192,4 +199,4 @@ perfis = [
 #Pesos para cada critério (coluna)
 pesos = np.array([9, 8, 8])
 
-topsis(matriz, pesos, perfis)
+topsis(matriz, pesos, perfis, criterios)
