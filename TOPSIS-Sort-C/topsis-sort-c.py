@@ -1,4 +1,3 @@
-# import csv # Para a leitura dos dados
 # Importa a biblioteca NumPy, que é utilizada para realizar operações matriciais eficientes em Python.
 import numpy as np
 
@@ -33,7 +32,7 @@ def criar_matriz_decisao_completa(matriz_decisao, perfis_centrais):
 # STEP 5
 # STEP 5.1: Normalizar a Matriz de Decisão Completa
 # Isso é necessário porque os critérios podem ter unidades diferentes, escalas diferentes ou variações de valores muito distintas, o que pode distorcer a análise se não forem tratados adequadamente.A normalização coloca todos os critérios em uma escala comum para que possam ser comparáveis de forma justa.
-def normalizar_matriz_decisao(matriz_decisao_completa):
+def normalizar_matriz_decisao_completa(matriz_decisao_completa):
     # Realizando a normalização por min-max
     valores_minimos = np.min(matriz_decisao_completa, axis=0)  # Calcula o valor mínimo ao longo de cada coluna
     valores_maximos = np.max(matriz_decisao_completa, axis=0)  # Calcula o valor máximo ao longo de cada coluna
@@ -50,14 +49,14 @@ def normalizar_pesos(pesos):
     return pesos_normalizados
 
 
-# STEP 5.2: Calcular a Matriz de Decisão Ponderada e Normalizada
-def calcular_matriz_ponderada_normalizada(matriz_normalizada, pesos):
+# STEP 5.2: Calcular a Matriz de Decisão Completa Ponderada e Normalizada
+def calcular_matriz_completa_ponderada_normalizada(matriz_normalizada, pesos):
     #matriz_normalizada = np.array(matriz_normalizada)
     # Multiplicando cada valor normalizado pelo peso correspondente do critério
-    matriz_ponderada_normalizada = matriz_normalizada * pesos
+    matriz_completa_ponderada_normalizada = matriz_normalizada * pesos
 
     # Retorna a matriz de decisão ponderada e normalizada
-    return matriz_ponderada_normalizada.tolist()
+    return matriz_completa_ponderada_normalizada.tolist()
 
 
 # STEP 6: Determine as soluções ideais e anti-ideais
@@ -73,64 +72,48 @@ def determinar_solucoes_ideais(matriz_ponderada_normalizada):
 
 
 # STEP 7: Calcular as distâncias euclidianas de cada alternativa e perfil para as soluções ideais e anti-ideais
-def calcular_distancias_euclidianas(matriz_ponderada_normalizada, solucao_ideal, solucao_anti_ideal):
-    """
-    Calcula as distâncias euclidianas de cada alternativa e perfil para as soluções ideais e anti-ideais.
+def calcular_distancias_euclidianas(matriz_normalizada_ponderada, solucao_ideal, solucao_anti_ideal):
+    # Calcula as distâncias euclidianas de cada alternativa e perfil para as soluções ideais e anti-ideais.
 
-    Retorna:
-    - distancias_ideal: As distâncias euclidianas de cada alternativa e perfil para a solução ideal.
-    - distancias_anti_ideal: As distâncias euclidianas de cada alternativa e perfil para a solução anti-ideal.
-    """
-
-    # Calcular as distâncias euclidianas para a solução ideal
-    distancias_ideal = np.sqrt(np.sum((matriz_ponderada_normalizada - solucao_ideal) ** 2, axis=1))
+    distancias_ideal = np.sqrt(np.sum((matriz_normalizada_ponderada - solucao_ideal) ** 2, axis=1))
     # A distância euclidiana de cada alternativa para a solução ideal é calculada pela raiz quadrada da soma dos quadrados das diferenças entre os valores da alternativa e os valores ideais em cada critério.
 
     # Calcular as distâncias euclidianas para a solução anti-ideal
-    distancias_anti_ideal = np.sqrt(np.sum((matriz_ponderada_normalizada - solucao_anti_ideal) ** 2, axis=1))
+    distancias_anti_ideal = np.sqrt(np.sum((matriz_normalizada_ponderada - solucao_anti_ideal) ** 2, axis=1))
     # A distância euclidiana de cada alternativa para a solução anti-ideal é calculada da mesma forma, mas usando os valores anti-ideais em vez dos valores ideais.
 
     return distancias_ideal, distancias_anti_ideal
 
 
 # STEP 8: Calcular o coeficiente de proximidade de cada alternativa para a solução ideal
-def calcular_coeficiente_proximidade(distancias_ideal, distancias_anti_ideal):
-    """
-    Calcula o coeficiente de proximidade de cada alternativa para a solução ideal.
-
-    Parâmetros:
-    - distancias_ideal: As distâncias euclidianas de cada alternativa para a solução ideal.
-    - distancias_anti_ideal: As distâncias euclidianas de cada alternativa para a solução anti-ideal.
-
-    Retorna:
-    - coeficiente_proximidade: O coeficiente de proximidade de cada alternativa para a solução ideal.
-    """
-
-    # Calcular o coeficiente de proximidade para cada alternativa
-    coeficiente_proximidade = distancias_anti_ideal / (distancias_ideal + distancias_anti_ideal)
+def calcular_coeficiente_proximidade(distancia_ideal, distancia_anti_ideal):
+    # Calcula o coeficiente de proximidade de cada alternativa para a solução ideal.
+    coeficiente_proximidade = distancia_anti_ideal / (distancia_ideal + distancia_anti_ideal)
     # O coeficiente de proximidade é calculado como a razão entre a distância para a solução anti-ideal e a soma das distâncias para a solução ideal e a solução anti-ideal.
 
     return coeficiente_proximidade
 
 
-# STEP 9: Classificar as alternativas fazendo comparações entre seus coeficientes de proximidade e os dos perfis
-def classificar_alternativas(closeness_coefficients, closeness_coefficients_perfil):
-    """
-    Classifica as alternativas fazendo comparações entre seus coeficientes de proximidade e os dos perfis.
+# STEP 9: Classificar as alternativas da matriz e os perfis fazendo comparações entre seus coeficientes de proximidade
+def classificar_alternativas(coeficientes_proximidade_alternativas, coeficientes_proximidade_perfis):
+    coeficientes_proximidade_alternativas = np.array(coeficientes_proximidade_alternativas)
+    coeficientes_proximidade_perfis = np.array(coeficientes_proximidade_perfis)
+    classificacoes = []
 
-    Parâmetros:
-    - closeness_coefficients: Os coeficientes de proximidade das alternativas em relação à solução ideal.
-    - closeness_coefficients_perfil: Os coeficientes de proximidade dos perfis.
+    for cpa in coeficientes_proximidade_alternativas:
+        diffs = np.abs(cpa - coeficientes_proximidade_perfis)
+        
+        if diffs[0] <= diffs[1]:
+            classificacoes.append('C1')
+        else:
+            for k in range(1, len(coeficientes_proximidade_perfis)):
+                if diffs[k-1] < diffs[k] and diffs[k-2] <= diffs[k-1]:
+                    classificacoes.append(f'C{k}')
+                    break
+            else:
+                classificacoes.append(f'C{len(coeficientes_proximidade_perfis)}')
 
-    Retorna:
-    - classificacao: Um array de classificação das alternativas, indicando sua posição relativa em relação aos perfis.
-    """
-
-    # Comparar os coeficientes de proximidade das alternativas com os dos perfis
-    # Se o coeficiente de proximidade da alternativa for maior ou igual ao do perfil, a alternativa é considerada adequada para o perfil.
-    classificacao = np.where(closeness_coefficients >= closeness_coefficients_perfil, 'Adequado', 'Inadequado')
-
-    return classificacao
+    return classificacoes
 
 
 # Função principal que executa todas as etapas do algoritmo TOPSIS
@@ -144,40 +127,46 @@ def topsis(matriz_decisao, pesos, perfis):
     print("Matriz de decisão completa:", matriz_decisao_completa)
 
     # STEP 5
-    matriz_normalizada = normalizar_matriz_decisao(matriz_decisao_completa)
-    print("Matriz normalizada:", matriz_normalizada)
-
-    matriz_perfil_normalizada = normalizar_matriz_decisao(perfis)
-    print("Matriz perfil normalizada:", matriz_perfil_normalizada)
+    matriz_decisao_normalizada = normalizar_matriz_decisao_completa(matriz_decisao_completa)
+    print("Matriz normalizada:", matriz_decisao_normalizada)
 
     # STEP 5.2
+    #!!!!!!!!!!!!ALTERAR PARA QUE OS PESOS NORMALIZADOS SEJAM UTILIZADOS!!!!!!!!!!!
     pesos_normalizados = normalizar_pesos(pesos)
-    matriz_ponderada_normalizada = calcular_matriz_ponderada_normalizada(matriz_normalizada, pesos)
-    print("Matriz ponderada normalizada:", matriz_ponderada_normalizada)
+    matriz_completa_ponderada_normalizada = calcular_matriz_completa_ponderada_normalizada(matriz_decisao_normalizada, pesos_normalizados) # Lembrar de colocar pesos normalizados!
+    print("Matriz ponderada normalizada:", matriz_completa_ponderada_normalizada)
 
     # STEP 6
-    solucao_ideal, solucao_anti_ideal = determinar_solucoes_ideais(matriz_ponderada_normalizada)
-    print("Solução ideal:", solucao_ideal)
-    print("Solução anti-ideal:", solucao_anti_ideal)
+    solucao_ideal, solucao_anti_ideal = determinar_solucoes_ideais(matriz_completa_ponderada_normalizada)
+    print("Solução ideal:", solucao_ideal.tolist())
+    print("Solução anti-ideal:", solucao_anti_ideal.tolist())
 
     # STEP 7
-    distancias_alternativa_ideal, distancias_alternativa_anti_ideal = calcular_distancias_euclidianas(matriz_ponderada_normalizada, solucao_ideal, solucao_anti_ideal)
-    print("Distância alternativas ideal:", distancias_alternativa_ideal)
-    print("Distâncias alternativas anti-ideais:", distancias_alternativa_anti_ideal)
+    tamanho_matriz_decisao = len(matriz_decisao)
+    tamanho_matriz_perfil = len(perfis)
+    
+    # Dividindo matriz de decisão ponderada normalizada em matriz de decisão e matriz de perfil
+    matriz_decisao_ponderada_normalizada = matriz_completa_ponderada_normalizada[:tamanho_matriz_decisao]
+    matriz_perfil_ponderada_normalizada = matriz_completa_ponderada_normalizada[tamanho_matriz_decisao:tamanho_matriz_decisao+tamanho_matriz_perfil]
 
-    distancias_perfil_ideal, distancias_perfil_anti_ideal = calcular_distancias_euclidianas(matriz_perfil_normalizada, solucao_ideal, solucao_anti_ideal)
-    print("Distâncias perfil ideal:", distancias_perfil_ideal)
-    print("Distâncias perfil anti-ideal:", distancias_perfil_anti_ideal)
+    # Calculando distancias ideais e anti-ideais
+    distancias_alternativa_ideal, distancias_alternativa_anti_ideal = calcular_distancias_euclidianas(matriz_decisao_ponderada_normalizada, solucao_ideal, solucao_anti_ideal)
+    print("Distância alternativas ideal:", distancias_alternativa_ideal.tolist())
+    print("Distâncias alternativas anti-ideais:", distancias_alternativa_anti_ideal.tolist())
+
+    distancias_perfil_ideal, distancias_perfil_anti_ideal = calcular_distancias_euclidianas(matriz_perfil_ponderada_normalizada, solucao_ideal, solucao_anti_ideal)
+    print("Distâncias perfil ideal:", distancias_perfil_ideal.tolist())
+    print("Distâncias perfil anti-ideal:", distancias_perfil_anti_ideal.tolist())
 
     # STEP 8
     coeficiente_proximidade_alternativa = calcular_coeficiente_proximidade(distancias_alternativa_ideal, distancias_alternativa_anti_ideal)
-    print("Coeficiente de proximidade:", coeficiente_proximidade_alternativa)
-
-    coeficiente_proximidade_perfil = calcular_coeficiente_proximidade(distancias_perfil_ideal, distancias_perfil_anti_ideal)
-    print("Coeficiente de proximidade perfil:", coeficiente_proximidade_perfil)
+    print("Coeficiente de proximidade da alternativa:", coeficiente_proximidade_alternativa.tolist())
+    
+    coeficiente_proximidade_perfil = calcular_coeficiente_proximidade(distancias_perfil_ideal, distancias_perfil_anti_ideal.tolist())
+    print("Coeficiente de proximidade perfil:", coeficiente_proximidade_perfil.tolist())
 
     # STEP 9
-    classificacao = classificar_alternativas(coeficiente_proximidade, perfis)
+    classificacao = classificar_alternativas(coeficiente_proximidade_alternativa, coeficiente_proximidade_perfil)
 
     print("Classificação:", classificacao)
     return classificacao
@@ -186,7 +175,7 @@ def topsis(matriz_decisao, pesos, perfis):
 
 # Exemplo de uso
 # STEP 1
-# Matriz de decisão, onde cada linha representa um perfil de investimento (Conservador, Moderado, Agressivo), e cada coluna representa um critério (Retorno, Risco, Liquidez, Crescimento). Os valores dentro da matriz são as características não normalizadas de cada perfil de investimento.
+# Matriz de decisão, onde cada linha representa uma alternativa e cada coluna um critério
 matriz = [
     [8, 10, 6],  # Alternativa A
     [7, 6, 9],  # Alternativa B
@@ -194,12 +183,13 @@ matriz = [
 ]
 
 #STEP 2
+#Matriz de perfis centrais
 perfis = [
     [10, 10, 9],  # Bom
     [8, 7, 9],  # Médio
     [7, 6, 6]  # Ruim
 ]
-
+#Pesos para cada critério (coluna)
 pesos = np.array([9, 8, 8])
 
 topsis(matriz, pesos, perfis)
