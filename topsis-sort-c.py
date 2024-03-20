@@ -18,57 +18,57 @@ def determinar_dominio_dos_criterios(matriz_decisao):
     matriz_dominio = np.vstack((maiores_valores, menores_valores))
     # A matriz de domínio é composta pelos maiores e menores valores de cada critério, onde a primeira linha representa os maiores valores (solução ideal) e a segunda linha representa os menores valores (solução não ideal).
 
-    return matriz_dominio.tolist()
+    return matriz_dominio
+
 
 # STEP 4 
-def criar_matriz_decisao_completa(matriz_decisao, dominio_dos_criterios, perfis_centrais):
+def criar_matriz_decisao_completa(matriz_decisao, perfis_centrais):
     # Concatenando a matriz de decisão com a matriz de domínio
-    matriz_decisao_completa = matriz_decisao + perfis_centrais + dominio_dos_criterios
+    matriz_decisao_completa = matriz_decisao + perfis_centrais
 
     # A concatenação dessas duas matrizes resulta na matriz de decisão completa, onde cada elemento da matriz contém tanto o valor real do critério quanto seus limites de variação(mínimo e máximo). Esta matriz é usada posteriormente no cálculo das distâncias entre as alternativas e as soluções ideal e anti-ideal no método TOPSIS.
     return matriz_decisao_completa
 
+
 # STEP 5
 # STEP 5.1: Normalizar a Matriz de Decisão Completa
 # Isso é necessário porque os critérios podem ter unidades diferentes, escalas diferentes ou variações de valores muito distintas, o que pode distorcer a análise se não forem tratados adequadamente.A normalização coloca todos os critérios em uma escala comum para que possam ser comparáveis de forma justa.
-def normalizar_matriz_decisao(matriz_decisao_completa, metodo_normalizacao='max'):
-    # Definindo o método de normalização
-    if metodo_normalizacao == 'max':
-        matriz_decisao_completa = np.array(matriz_decisao_completa)
-        # Normalização pelo máximo
-        matriz_normalizada = matriz_decisao_completa / np.max(matriz_decisao_completa, axis=1, keepdims=True)
-    elif metodo_normalizacao == 'interval':
-        # Normalização por intervalo
-        minimo = matriz_decisao_completa[-1]
-        maximo = matriz_decisao_completa[-2]
-        matriz_normalizada = (matriz_decisao_completa - minimo) / (maximo - minimo)
-    else:
-        raise ValueError("Método de normalização inválido. Use 'max' ou 'interval'.")
+def normalizar_matriz_decisao(matriz_decisao_completa):
+    # Realizando a normalização por min-max
+    valores_minimos = np.min(matriz_decisao_completa, axis=0)  # Calcula o valor mínimo ao longo de cada coluna
+    valores_maximos = np.max(matriz_decisao_completa, axis=0)  # Calcula o valor máximo ao longo de cada coluna
+    matriz_normalizada = (matriz_decisao_completa - valores_minimos) / (valores_maximos - valores_minimos)  # Aplica a fórmula min-max
 
     #  Retorna matriz de decisão completa normalizada.
-    return matriz_normalizada.tolist()
+    return matriz_normalizada
+
+def normalizar_pesos(pesos):
+    #  Retorna pesos normalizados
+    soma_pesos = np.sum(pesos)  # Calcula a soma dos pesos
+    pesos_normalizados = pesos / soma_pesos  # Divide cada peso pela soma dos pesos
+    return pesos_normalizados
 
 # STEP 5.2: Calcular a Matriz de Decisão Ponderada e Normalizada
-def calcular_matriz_ponderada_normalizada(matriz_normalizada, pesos):
+def calcular_matriz_ponderada_normalizada(matriz_normalizada, pesos_normalizados):
+    #matriz_normalizada = np.array(matriz_normalizada)
     # Multiplicando cada valor normalizado pelo peso correspondente do critério
-    # Utiliza-se o slicing para ignorar as duas últimas linhas da matriz, que representam os limites de variação (máximo e mínimo) e não os valores reais.
-    # O slicing [:, None] é usado para transformar o array de pesos em uma matriz de uma única coluna, de modo que possa ser multiplicado diretamente com a matriz normalizada.
-    matriz_ponderada_normalizada = matriz_normalizada[:-2] * pesos[:, None]
+    matriz_ponderada_normalizada = matriz_normalizada * pesos_normalizados
 
     # Retorna a matriz de decisão ponderada e normalizada
     return matriz_ponderada_normalizada
 
+
 # STEP 6: Determine as soluções ideais e anti-ideais
 def determinar_solucoes_ideais(matriz_ponderada_normalizada):
     # Determinando as soluções ideais
-    solucao_ideal = np.max(matriz_ponderada_normalizada, axis=1)
+    solucao_ideal = np.max(matriz_ponderada_normalizada, axis=0)
     # A solução ideal é definida como o perfil de investimento que possui o melhor desempenho em todos os critérios. Para encontrá-la, identificamos o maior valor para cada critério entre todas as alternativas. Esses valores representam o perfil de investimento que maximiza os benefícios em cada critério.
 
     # Determinando as soluções anti-ideais
-    solucao_anti_ideal = np.min(matriz_ponderada_normalizada, axis=1)
+    solucao_anti_ideal = np.min(matriz_ponderada_normalizada, axis=0)
     # A solução anti-ideal é o oposto da solução ideal, representando o perfil de investimento que possui o pior desempenho em todos os critérios. Para encontrá-la, identificamos o menor valor para cada critério entre todas as alternativas. Esses valores representam o perfil de investimento que minimiza os benefícios em cada critério.
-
     return solucao_ideal, solucao_anti_ideal
+
 
 # STEP 7: Calcular as distâncias euclidianas de cada alternativa e perfil para as soluções ideais e anti-ideais
 # Alterar!!!!
@@ -131,22 +131,22 @@ def classificar_alternativas(closeness_coefficients, closeness_coefficients_perf
     return classificacao
 
 # Função principal que executa todas as etapas do algoritmo TOPSIS
-def topsis(matriz_decisao, pesos, perfil_central, metodo_normalizacao='max'):
+def topsis(matriz_decisao, pesos, perfis_centrais):
     # STEP 3
     dominio_dos_criterios = determinar_dominio_dos_criterios(matriz_decisao)
     print("Domínio dos critérios:", dominio_dos_criterios)
     
     # STEP 4
-    matriz_decisao_completa = criar_matriz_decisao_completa(matriz_decisao, dominio_dos_criterios, perfil_central)
+    matriz_decisao_completa = criar_matriz_decisao_completa(matriz_decisao, perfis_centrais)
     print("Matriz de decisão completa:", matriz_decisao_completa)
 
     # STEP 5
-    #matriz_normalizada = normalizar_matriz_decisao(matriz_decisao_completa, metodo_normalizacao)
     matriz_normalizada = [[0.333, 1, 0], [0, 0, 1], [1, 0.75, 1]]
     print("Matriz normalizada:", matriz_normalizada)
 
     # STEP 5.2
-    matriz_ponderada_normalizada = calcular_matriz_ponderada_normalizada(matriz_normalizada, pesos)
+    pesos_normalizados = normalizar_pesos(pesos)
+    matriz_ponderada_normalizada = calcular_matriz_ponderada_normalizada(matriz_normalizada, pesos_normalizados)
     print("Matriz ponderada normalizada:", matriz_ponderada_normalizada)
 
     # STEP 6
@@ -164,7 +164,7 @@ def topsis(matriz_decisao, pesos, perfil_central, metodo_normalizacao='max'):
     print("Coeficiente de proximidade:", coeficiente_proximidade)
 
     # STEP 9
-    classificacao = classificar_alternativas(coeficiente_proximidade, perfil_central)
+    classificacao = classificar_alternativas(coeficiente_proximidade, perfis_centrais)
 
     print("Classificação:", classificacao)
     return classificacao
@@ -181,7 +181,7 @@ matriz = [
 ]
 
 #STEP 2
-perfil_central = [
+perfis_centrais = [
     [10, 10, 9],  # Bom
     [8, 7, 9],  # Médio
     [7, 6, 6]  # Ruim
@@ -189,4 +189,4 @@ perfil_central = [
 
 pesos = np.array([9, 8, 8])
 
-topsis(matriz, pesos, perfil_central)
+topsis(matriz, pesos, perfis_centrais)
