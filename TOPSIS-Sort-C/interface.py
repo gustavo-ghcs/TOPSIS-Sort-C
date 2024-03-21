@@ -1,12 +1,14 @@
 import streamlit as stlit
+import awesome_streamlit as ast
 from topsis_sort_c import *
 import pandas as pd
 import numpy as np
 import ast
 
 #titulos da pagina
+stlit.set_page_config(page_title="Topsis Sort C", page_icon=":space_invader:", layout="wide", initial_sidebar_state="expanded", )
 stlit.title('Algoritmo Topsis Sort-C')
-stlit.write('Essa é uma simples interface do Streamlit ;)')
+
 
 # Criando barra lateral
 sidebar = stlit.sidebar
@@ -57,7 +59,37 @@ else:
 
 if matriz and perfis and pesos and criterio:
     resultado = topsis(matriz, pesos, perfis, criterio)
-    stlit.write(resultado)
+
+    
+    # Estilizando a saída da função topsis
+    stlit.title('Classificação dos perfis')
+    
+
+    stlit.markdown("""
+    <link rel="stylesheet" href="style.css">
+    """, unsafe_allow_html=True)
+    
+    cores = ['#01DF3A', '#DBA901', '#DF3A01']
+    for i, item in enumerate(resultado):
+        cor = cores[i % len(cores)]
+        
+        html = f"""
+            <div style="
+                font-size: 18px;
+                color: {cor};
+                border: 1px solid #ddd;
+                padding: 10px;
+                margin: 5px;
+                border-radius: 12px;
+                max-width: 300px;
+            ">
+                {item}
+            </div>
+        """
+        
+        stlit.write(html, unsafe_allow_html=True)
+
+    
 else:
     if input_type == "Entrada manual":
         stlit.error("Por favor, carregue os arquivos CSV ou insira os dados manualmente.")
