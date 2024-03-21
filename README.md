@@ -13,7 +13,7 @@ O TOPSIS-Sort-C expande os conceitos centrais do TOPSIS (Technique for Order Pre
 
 ## Experimente o TOPSIS-Sort-C
 
-Para utilizar a lib do nosso algoritmo, acesse o [link](https://pypi.org/project/TOPSIS-Sort-C/). Além disso, disponibilizamos uma página no Streamlit para que seja possível testar no seu navegador, basta acessar o [link](https://topsis-sort-c.streamlit.app).
+Para utilizar a lib do nosso algoritmo, acesse o [link](https://pypi.org/project/TOPSIS-Sort-C/). Além disso, disponibilizamos uma página no Streamlit para que seja possível testar no seu navegador, basta acessar o [link](https://topsis-sort.streamlit.app/).
 
 ------
 
