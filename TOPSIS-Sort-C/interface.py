@@ -1,31 +1,27 @@
-import streamlit as stlit
-import awesome_streamlit as ast
+import streamlit as st
 from topsis_sort_c import *
 import pandas as pd
-import numpy as np
 import ast
 
-#titulos da pagina
-stlit.set_page_config(page_title="Topsis Sort C", page_icon=":space_invader:", layout="wide", initial_sidebar_state="expanded", )
-stlit.title('Algoritmo Topsis Sort-C')
-
+# Titulos da pagina
+st.set_page_config(page_title="Topsis Sort C", page_icon=":space_invader:", layout="wide", initial_sidebar_state="expanded")
+st.title('Algoritmo Topsis Sort-C')
 
 # Criando barra lateral
-sidebar = stlit.sidebar
-# Adicionando opções pra barra lateral
+sidebar = st.sidebar
+# Adicionando opções para barra lateral
 expander = sidebar.expander("Options", expanded=False)
 
 with expander:
     sidebar.title("Entrada")
     # Adicionando botão de rádio para escolher o tipo de entrada
-    input_type = sidebar.radio("Escolha o tipo de entrada", ("Entrada manual","Upload de arquivo CSV"))
+    input_type = sidebar.radio("Escolha o tipo de entrada", ("Entrada manual", "Upload de arquivo CSV"))
     if input_type == "Upload de arquivo CSV":
         # Adicionando botão de upload de arquivo CSV
         uploaded_file1 = sidebar.file_uploader("Arquivo CSV para Matriz")
         uploaded_file2 = sidebar.file_uploader("Arquivo CSV para os Perfis")
         uploaded_file3 = sidebar.file_uploader("Arquivo CSV para os Pesos")
         uploaded_file4 = sidebar.file_uploader("Arquivo CSV para o Critério")
-        
     elif input_type == "Entrada manual":
         # Adicionando campos de entrada para matriz, perfis, pesos e critério
         matriz_input = sidebar.text_input("Matriz")
@@ -60,19 +56,13 @@ else:
 if matriz and perfis and pesos and criterio:
     resultado = topsis(matriz, pesos, perfis, criterio)
 
-    
     # Estilizando a saída da função topsis
-    stlit.title('Classificação dos perfis')
-    
+    st.title('Classificação dos perfis')
 
-    stlit.markdown("""
-    <link rel="stylesheet" href="style.css">
-    """, unsafe_allow_html=True)
-    
     cores = ['#01DF3A', '#DBA901', '#DF3A01']
     for i, item in enumerate(resultado):
         cor = cores[i % len(cores)]
-        
+
         html = f"""
             <div style="
                 font-size: 18px;
@@ -86,12 +76,11 @@ if matriz and perfis and pesos and criterio:
                 {item}
             </div>
         """
-        
-        stlit.write(html, unsafe_allow_html=True)
 
-    
+        st.write(html, unsafe_allow_html=True)
+
 else:
     if input_type == "Entrada manual":
-        stlit.error("Por favor, carregue os arquivos CSV ou insira os dados manualmente.")
-    elif input_type == "Upload de arquivo CSV" :
-        stlit.error("Ainda estamos em fase de desenvolvimento. Por favor, insira os dados manualmente.")
+        st.error("Por favor, carregue os arquivos CSV ou insira os dados manualmente.")
+    elif input_type == "Upload de arquivo CSV":
+        st.error("Ainda estamos em fase de desenvolvimento. Por favor, insira os dados manualmente.")
