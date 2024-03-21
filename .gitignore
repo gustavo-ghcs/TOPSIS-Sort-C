@@ -1,4 +1,7 @@
+dist/
+
+TOPSIS_Sort-C.egg-info/
+
+.devcontainer/
+
 __pycache__
-/dist/
-/TOPSIS_Sorter.egg-info/
-/.devcontainer/
