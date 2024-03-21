@@ -191,3 +191,10 @@ perfis = [
 pesos = np.array([9, 8, 8])
 
 topsis(matriz, pesos, perfis, criterios)
+
+'''
+matriz = [[8, 10, 6], [7, 6, 9], [10, 9, 9]]
+pesos = [9, 8, 8]
+perfis =[[10, 10, 9], [8, 7, 9], [7, 6, 6]]
+criterios = [True, False, True]
+'''	

@@ -6,7 +6,7 @@ import ast
 
 #titulos da pagina
 stlit.title('Algoritmo Topsis Sort-C')
-stlit.write('This is a simple interface for Streamlit')
+stlit.write('Essa é uma simples interface do Streamlit ;)')
 
 # Criando barra lateral
 sidebar = stlit.sidebar
@@ -16,19 +16,22 @@ expander = sidebar.expander("Options", expanded=False)
 with expander:
     sidebar.title("Entrada")
     # Adicionando botão de rádio para escolher o tipo de entrada
-    input_type = sidebar.radio("Escolha o tipo de entrada", ("Upload de arquivo CSV", "Entrada manual"))
+    input_type = sidebar.radio("Escolha o tipo de entrada", ("Entrada manual","Upload de arquivo CSV"))
     if input_type == "Upload de arquivo CSV":
         # Adicionando botão de upload de arquivo CSV
         uploaded_file1 = sidebar.file_uploader("Arquivo CSV para Matriz")
         uploaded_file2 = sidebar.file_uploader("Arquivo CSV para os Perfis")
         uploaded_file3 = sidebar.file_uploader("Arquivo CSV para os Pesos")
         uploaded_file4 = sidebar.file_uploader("Arquivo CSV para o Critério")
-    else:
+        
+    elif input_type == "Entrada manual":
         # Adicionando campos de entrada para matriz, perfis, pesos e critério
         matriz_input = sidebar.text_input("Matriz")
         perfis_input = sidebar.text_input("Perfis")
         pesos_input = sidebar.text_input("Pesos")
-        criterio_input = sidebar.text_input("Critério")
+        criterio_input = sidebar.text_input("Critérios")
+    else:
+        pass
 
 matriz = perfis = pesos = criterio = None
 
@@ -56,4 +59,7 @@ if matriz and perfis and pesos and criterio:
     resultado = topsis(matriz, pesos, perfis, criterio)
     stlit.write(resultado)
 else:
-    stlit.error("Por favor, carregue os arquivos CSV ou insira os dados manualmente.")
+    if input_type == "Entrada manual":
+        stlit.error("Por favor, carregue os arquivos CSV ou insira os dados manualmente.")
+    elif input_type == "Upload de arquivo CSV" :
+        stlit.error("Ainda estamos em fase de desenvolvimento. Por favor, insira os dados manualmente.")
