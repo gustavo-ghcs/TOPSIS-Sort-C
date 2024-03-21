@@ -117,25 +117,19 @@ def classificar_alternativas(coeficientes_proximidade_alternativas, coeficientes
 def topsis(matriz_decisao, pesos, perfis, criterios):
     # STEP 3
     dominio_dos_criterios = determinar_dominio_dos_criterios(matriz_decisao)
-    print("Domínio dos critérios:", dominio_dos_criterios)
     
     # STEP 4
     matriz_decisao_completa = criar_matriz_decisao_completa(matriz_decisao, perfis)
-    print("Matriz de decisão completa:", matriz_decisao_completa)
 
     # STEP 5
     matriz_decisao_normalizada = normalizar_matriz_decisao_completa(matriz_decisao_completa)
-    print("Matriz normalizada:", matriz_decisao_normalizada)
 
     # STEP 5.2
     pesos_normalizados = normalizar_pesos(pesos)
     matriz_completa_ponderada_normalizada = calcular_matriz_completa_ponderada_normalizada(matriz_decisao_normalizada, pesos_normalizados)
-    print("Matriz ponderada normalizada:", matriz_completa_ponderada_normalizada)
 
     # STEP 6
     solucao_ideal, solucao_anti_ideal = determinar_solucoes_ideais(matriz_completa_ponderada_normalizada, criterios)
-    print("Solução ideal:", solucao_ideal.tolist())
-    print("Solução anti-ideal:", solucao_anti_ideal.tolist())
 
     # STEP 7
     tamanho_matriz_decisao = len(matriz_decisao)
@@ -147,19 +141,13 @@ def topsis(matriz_decisao, pesos, perfis, criterios):
 
     # Calculando distancias ideais e anti-ideais
     distancias_alternativa_ideal, distancias_alternativa_anti_ideal = calcular_distancias_euclidianas(matriz_decisao_ponderada_normalizada, solucao_ideal, solucao_anti_ideal)
-    print("Distância alternativas ideal:", distancias_alternativa_ideal.tolist())
-    print("Distâncias alternativas anti-ideais:", distancias_alternativa_anti_ideal.tolist())
 
     distancias_perfil_ideal, distancias_perfil_anti_ideal = calcular_distancias_euclidianas(matriz_perfil_ponderada_normalizada, solucao_ideal, solucao_anti_ideal)
-    print("Distâncias perfil ideal:", distancias_perfil_ideal.tolist())
-    print("Distâncias perfil anti-ideal:", distancias_perfil_anti_ideal.tolist())
 
     # STEP 8
     coeficiente_proximidade_alternativa = calcular_coeficiente_proximidade(distancias_alternativa_ideal, distancias_alternativa_anti_ideal)
-    print("Coeficiente de proximidade da alternativa:", coeficiente_proximidade_alternativa.tolist())
     
     coeficiente_proximidade_perfil = calcular_coeficiente_proximidade(distancias_perfil_ideal, distancias_perfil_anti_ideal.tolist())
-    print("Coeficiente de proximidade perfil:", coeficiente_proximidade_perfil.tolist())
 
     # STEP 9
     classificacao = classificar_alternativas(coeficiente_proximidade_alternativa, coeficiente_proximidade_perfil)
@@ -169,29 +157,7 @@ def topsis(matriz_decisao, pesos, perfis, criterios):
 
 ###############################################################################
 
-# Exemplo de uso
-# STEP 1
-# Matriz de decisão, onde cada linha representa uma alternativa e cada coluna um critério
-# matriz = [
-#     [8, 10, 6],  # Alternativa A
-#     [7, 6, 9],  # Alternativa B
-#     [10, 9, 9]  # Alternativa C
-# ]
-
-# criterios = [True, False, True]
-
-# #STEP 2
-# #Matriz de perfis centrais
-# perfis = [
-#     [10, 10, 9],  # Bom
-#     [8, 7, 9],  # Médio
-#     [7, 6, 6]  # Ruim
-# ]
-# #Pesos para cada critério (coluna)
-# pesos = np.array([9, 8, 8])
-
-# topsis(matriz, pesos, perfis, criterios)
-
+# Exemplo de entrada manual
 '''
 matriz = [[8, 10, 6], [7, 6, 9], [10, 9, 9]]
 pesos = [9, 8, 8]

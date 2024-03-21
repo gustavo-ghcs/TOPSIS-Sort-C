@@ -21,7 +21,7 @@ with expander:
         uploaded_file1 = sidebar.file_uploader("Arquivo CSV para Matriz")
         uploaded_file2 = sidebar.file_uploader("Arquivo CSV para os Perfis")
         uploaded_file3 = sidebar.file_uploader("Arquivo CSV para os Pesos")
-        uploaded_file4 = sidebar.file_uploader("Arquivo CSV para o Critério")
+        uploaded_file4 = sidebar.file_uploader("Arquivo CSV para os Critérios")
     elif input_type == "Entrada manual":
         # Adicionando campos de entrada para matriz, perfis, pesos e critério
         matriz_input = sidebar.text_input("Matriz")
@@ -44,6 +44,10 @@ if input_type == "Upload de arquivo CSV" and uploaded_file1 is not None and uplo
     perfis = df_perfis.values.tolist()
     pesos = df_pesos.values.tolist()
     criterio = df_criterio.values.tolist()
+    print("matriz:", matriz)
+    print("perfis:", perfis)
+    print("pesos:", pesos)
+    print("criterios:", criterio)
 elif input_type == "Entrada manual" and matriz_input and perfis_input and pesos_input and criterio_input:
     # Convertendo as entradas de string para listas
     matriz = ast.literal_eval(matriz_input)
