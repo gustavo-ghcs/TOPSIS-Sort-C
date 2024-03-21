@@ -172,25 +172,25 @@ def topsis(matriz_decisao, pesos, perfis, criterios):
 # Exemplo de uso
 # STEP 1
 # Matriz de decisão, onde cada linha representa uma alternativa e cada coluna um critério
-matriz = [
-    [8, 10, 6],  # Alternativa A
-    [7, 6, 9],  # Alternativa B
-    [10, 9, 9]  # Alternativa C
-]
+# matriz = [
+#     [8, 10, 6],  # Alternativa A
+#     [7, 6, 9],  # Alternativa B
+#     [10, 9, 9]  # Alternativa C
+# ]
 
-criterios = [True, False, True]
+# criterios = [True, False, True]
 
-#STEP 2
-#Matriz de perfis centrais
-perfis = [
-    [10, 10, 9],  # Bom
-    [8, 7, 9],  # Médio
-    [7, 6, 6]  # Ruim
-]
-#Pesos para cada critério (coluna)
-pesos = np.array([9, 8, 8])
+# #STEP 2
+# #Matriz de perfis centrais
+# perfis = [
+#     [10, 10, 9],  # Bom
+#     [8, 7, 9],  # Médio
+#     [7, 6, 6]  # Ruim
+# ]
+# #Pesos para cada critério (coluna)
+# pesos = np.array([9, 8, 8])
 
-topsis(matriz, pesos, perfis, criterios)
+# topsis(matriz, pesos, perfis, criterios)
 
 '''
 matriz = [[8, 10, 6], [7, 6, 9], [10, 9, 9]]
