@@ -1,7 +1,5 @@
 dist/
 
-TOPSIS_Sort-C.egg-info/
-
 .devcontainer/
 
 __pycache__
