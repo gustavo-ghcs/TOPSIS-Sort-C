@@ -43,7 +43,7 @@ if input_type == "Upload de arquivo CSV" and uploaded_file1 is not None and uplo
     matriz = df_matriz.values.tolist()
     perfis = df_perfis.values.tolist()
     pesos = df_pesos.values.tolist()
-    criterio = df_criterio.values.tolist()
+    criterio = df_criterio.values.tolist()[0]
 elif input_type == "Entrada manual" and matriz_input and perfis_input and pesos_input and criterio_input:
     # Convertendo as entradas de string para listas
     matriz = ast.literal_eval(matriz_input)
@@ -57,7 +57,7 @@ if matriz and perfis and pesos and criterio:
     resultado = topsis(matriz, pesos, perfis, criterio)
 
     # Estilizando a saída da função topsis
-    st.title('Classificação dos perfis')
+    st.text('Classificação das alternativas da matriz de acordo com os perfis')
 
     cores = ['#01DF3A', '#DBA901', '#DF3A01']
     for i, item in enumerate(resultado):
@@ -78,9 +78,8 @@ if matriz and perfis and pesos and criterio:
         """
 
         st.write(html, unsafe_allow_html=True)
-    st.write(print("matriz:", matriz))
 else:
     if input_type == "Entrada manual":
-        st.error("Por favor, carregue os arquivos CSV ou insira os dados manualmente.")
+        st.error("Por favor, insira os dados manualmente.")
     elif input_type == "Upload de arquivo CSV":
-        st.error("Ainda estamos em fase de desenvolvimento. Por favor, insira os dados manualmente.")
+        st.error("Por favor, insira os arquivos CSV.")
