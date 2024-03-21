@@ -44,10 +44,6 @@ if input_type == "Upload de arquivo CSV" and uploaded_file1 is not None and uplo
     perfis = df_perfis.values.tolist()
     pesos = df_pesos.values.tolist()
     criterio = df_criterio.values.tolist()
-    print("matriz:", matriz)
-    print("perfis:", perfis)
-    print("pesos:", pesos)
-    print("criterios:", criterio)
 elif input_type == "Entrada manual" and matriz_input and perfis_input and pesos_input and criterio_input:
     # Convertendo as entradas de string para listas
     matriz = ast.literal_eval(matriz_input)
@@ -82,7 +78,7 @@ if matriz and perfis and pesos and criterio:
         """
 
         st.write(html, unsafe_allow_html=True)
-
+    st.write(print("matriz:", matriz))
 else:
     if input_type == "Entrada manual":
         st.error("Por favor, carregue os arquivos CSV ou insira os dados manualmente.")
