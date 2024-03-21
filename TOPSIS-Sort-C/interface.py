@@ -1,5 +1,5 @@
 import streamlit as stlit
-import awesome_streamlit as ast
+from awesome_streamlit import *
 from topsis_sort_c import *
 import pandas as pd
 import numpy as np
