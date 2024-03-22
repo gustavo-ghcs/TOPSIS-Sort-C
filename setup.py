@@ -5,7 +5,7 @@ with open("README.md", "r") as arq:
 
 setup(
     name='TOPSIS-Sort-C',
-    version='0.1',
+    version='0.1.1',
     license='MIT License',
     description='TOPSIS-Sort-C implemented in python',
     long_description=readme,
