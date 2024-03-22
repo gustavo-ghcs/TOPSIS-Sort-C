@@ -56,14 +56,63 @@ Critérios:
 ```bash
 True, False, True
 ```
-
 ------
 
 ## Métodos
 
+### 1. Domínio dos critérios
+  ```python
+    determinar_dominio_dos_criterios(matriz_decisao)
+  ```
+
+### 2. Matriz de decisão completa
+```python
+    criar_matriz_decisao_completa(matriz_decisao, perfis_centrais)
+  ```
+
+### 3. Normalizar Matriz
+```python
+    normalizar_matriz_decisao_completa(matriz_decisao_completa)
+  ```
+
+### 4. Normalizar pesos
+```python
+    normalizar_pesos(pesos)
+  ```
+
+### 5. Ponderar a Matriz normalizada
+```python
+    calcular_matriz_completa_ponderada_normalizada(matriz_normalizada, pesos)
+  ```
+
+### 6. Solução ideal
+```python
+    determinar_solucoes_ideais(matriz_ponderada_normalizada, criterios)
+  ```
+
+### 7. Distância Euclidiana
+```python
+    calcular_distancias_euclidianas(matriz_normalizada_ponderada, solucao_ideal, solucao_anti_ideal)
+  ```
+
+### 8. Coeficiente de proximidade
+```python
+    calcular_coeficiente_proximidade(distancia_ideal, distancia_anti_ideal)
+  ```
+
+### 9. Classificar as alternativas
+```python
+    classificar_alternativas(coeficientes_proximidade_alternativas, coeficientes_proximidade_perfis)
+  ```
+
 ------
 
 ## Limitações
+
+- Os tipos das entradas: listas e matrizes contendo apenas números.
+- O método "criar_matriz_decisao_completa" não retorna a matriz considerando a matriz de domínios.
+- O método "normalizar_matriz_decisao_completa" não realiza normalização intervalar, apenas por mínimo e máximo.
+- Na entrada que contém os tipos de critérios, "True" significa que o critério é de benefício, enquanto "False" significa que o critério é de custo.
 
 ------
 ## Autores do projeto
